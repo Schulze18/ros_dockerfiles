@@ -1,0 +1,28 @@
+FROM nvidia_ros_humble_base:latest
+
+SHELL ["/bin/bash", "-c"]
+
+# Check and Install updates
+RUN apt-get update \
+ && apt-get upgrade -y
+
+# Install Gazebo
+RUN apt-get install -y gazebo \
+ && apt-get install -y libgazebo11 \
+ && apt-get install -y ros-humble-gazebo-ros-pkgs
+ 
+# Install ROS2 Control
+RUN apt-get install -y ros-humble-ros2-control  \
+ && apt-get install -y ros-humble-ros2-controllers \
+ && apt-get install -y ros-humble-gazebo-ros2-control
+ 
+# Install ROS2 Cartographer
+RUN apt-get install -y ros-humble-cartographer  \
+ && apt-get install -y ros-humble-cartographer-ros
+
+# Install ROS2 Navigation
+RUN apt-get install -y ros-humble-navigation2  \
+ && apt-get install -y ros-humble-nav2-bringup
+
+
+WORKDIR /ros2_ws

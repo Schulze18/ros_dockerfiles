@@ -1,0 +1,25 @@
+FROM nvidia/cuda:11.7.0-base-ubuntu22.04
+
+SHELL ["/bin/bash", "-c"]
+
+RUN apt-get update \
+ && apt-get install -y locales curl gnupg lsb-release \
+ && apt install -y gcc clang clang-tools cmake python3
+ARG DEBIAN_FRONTEND=noninteractive
+RUN dpkg-reconfigure locales
+ 
+# Install ROS2 Humble
+RUN curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.key -o /usr/share/keyrings/ros-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/ros-archive-keyring.gpg] http://packages.ros.org/ros2/ubuntu $(source /etc/os-release && echo $UBUNTU_CODENAME) main" | tee /etc/apt/sources.list.d/ros2.list > /dev/null
+RUN apt-get update \
+ && apt upgrade -y 
+RUN apt-get install -y --no-install-recommends ros-humble-desktop
+RUN apt-get install -y --no-install-recommends python3-colcon-common-extensions
+
+RUN echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
+
+# Create Default Workspace
+RUN source /opt/ros/humble/setup.bash \
+ && mkdir -p /ros2_ws/src
+
+WORKDIR /ros2_ws
